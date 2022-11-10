@@ -3,4 +3,4 @@ export type VercelProviderOptions = {
     fetch: any
     entity: Record<string, any>
     debug: boolean
-  }
+}
