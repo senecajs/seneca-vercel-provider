@@ -4,12 +4,12 @@ import { getJSON, makeConfig, makeUrl, postJSON } from './utils'
 
 const Pkg = require('../package.json')
 
+import fetch from "node-fetch";
 
 function VercelProvider(this: any, options: VercelProviderOptions) {
   const seneca: any = this
 
   const entityBuilder = this.export('provider/entityBuilder')
-
 
   seneca.message('sys:provider,provider:vercel,get:info', get_info)
 
@@ -30,42 +30,40 @@ function VercelProvider(this: any, options: VercelProviderOptions) {
         cmd: {
           list: {
             action: async function(this: any, entize: any, msg: any) {
-              let json: any = await getJSON(makeUrl('projects', msg.q, options), makeConfig(seneca))
-              let projects = json.projects
+              const res: any = await getJSON(makeUrl('projects', msg.q, options), options, makeConfig(seneca))
+              let projects = res.projects
               let list = projects.map((data: any) => entize(data))
 
               // TODO: ensure seneca-transport preserves array props
-              list.page = json.page
+              list.page = res.page
 
               return list
             },
           },
           load: {
             action: async function(this: any, entize: any, msg: any) {
-              let json: any = await getJSON(makeUrl('project', msg.q, options), makeConfig(seneca))
-              let project = json.project
-              let list = project.map((data: any) => entize(data))
+              const res: any = await getJSON(makeUrl('projects', msg.q.id, options), options, makeConfig(seneca))
+              let load = res ? entize(res) : null
 
               // TODO: ensure seneca-transport preserves array props
-              list.page = json.page
+              load.page = res.page
 
-              return list
+              return load
             },
           },
           save: {
             action: async function(this: any, entize: any, msg: any) {
-              let body = this.util.deep(
+              const body = this.util.deep(
                 this.shared.primary,
-                options.entity.order.save,
+                options.entity.projects.save,
                 msg.ent.data$(false)
               )
 
-              let json: any = await postJSON(makeUrl('projects', msg.q, options), makeConfig(seneca, {
+              const res: any = await postJSON(makeUrl('projects', msg.q, options), makeConfig(seneca,{
                 body
               }), options)
 
-              let project = json
-              project.id = project.referenceOrderID
+              const project = res
               return entize(project)
             },
           }
@@ -77,23 +75,20 @@ function VercelProvider(this: any, options: VercelProviderOptions) {
 
 
   seneca.prepare(async function(this: any) {
-    let res =
-      await this.post('sys:provider,get:keymap,provider:tangocard')
+    let res = await this.post('sys:provider,get:keymap,provider:vercel')
 
     if (!res.ok) {
       throw this.fail('keymap')
     }
 
-    let src = res.keymap.name.value + ':' + res.keymap.key.value
-    let auth = Buffer.from(src).toString('base64')
+    let auth = res.keymap.usertoken.value
 
     this.shared.headers = {
-      Authorization: 'Basic ' + auth
+      Authorization: 'Bearer ' + auth,
     }
 
     this.shared.primary = {
-      customerIdentifier: res.keymap.cust.value,
-      accountIdentifier: res.keymap.acc.value,
+      name: res.keymap.projectname.value,
     }
 
   })
@@ -114,19 +109,13 @@ function VercelProvider(this: any, options: VercelProviderOptions) {
 const defaults: VercelProviderOptions = {
 
   // Vercel Projects API Endpoint /
-  url: 'https://api.vercel.com/v9/projects/',
-
+  url: 'https://api.vercel.com/v9/',
+  
   // Use global fetch by default - if exists
   fetch: ('undefined' === typeof fetch ? undefined : fetch),
 
   entity: {
     projects: {
-      list: {
-        // Default fields
-      },
-      load: {
-        // Default fields
-      },
       save: {
         // Default fields
       }
