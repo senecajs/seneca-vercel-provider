@@ -1,6 +1,6 @@
 {
   "name": "@seneca/vercel-provider",
-  "version": "0.1.2",
+  "version": "0.1.0",
   "main": "dist/vercel-provider.js",
   "type": "commonjs",
   "types": "dist/vercel-provider.d.ts",
