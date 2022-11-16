@@ -1,10 +1,10 @@
-![Seneca Tangocard-Provider](http://senecajs.org/files/assets/seneca-logo.png)
+![Seneca Vercel-Provider](http://senecajs.org/files/assets/seneca-logo.png)
 
-> _Seneca Tangocard-Provider_ is a plugin for [Seneca](http://senecajs.org)
+> _Seneca Vercel-Provider_ is a plugin for [Seneca](http://senecajs.org)
 
 
-Provides access to the Tangocard API using the Seneca *provider*
-convention. Tangocard API entities are represented as Seneca entities so
+Provides access to the Vercel API using the Seneca *provider*
+convention. Vercel API entities are represented as Seneca entities so
 that they can be accessed using the Seneca entity API and messages.
 
 See [seneca-entity](senecajs/seneca-entity) and the [Seneca Data
@@ -13,12 +13,12 @@ Tutorial](https://senecajs.org/docs/tutorials/understanding-data-entities.html) 
 
 NOTE: underlying third party SDK needs to be replaced as out of date and has a security issue.
 
-[![npm version](https://img.shields.io/npm/v/@seneca/tangocard-provider.svg)](https://npmjs.com/package/@seneca/tangocard-provider)
-[![build](https://github.com/senecajs/seneca-tangocard-provider/actions/workflows/build.yml/badge.svg)](https://github.com/senecajs/seneca-tangocard-provider/actions/workflows/build.yml)
-[![Coverage Status](https://coveralls.io/repos/github/senecajs/seneca-tangocard-provider/badge.svg?branch=main)](https://coveralls.io/github/senecajs/seneca-tangocard-provider?branch=main)
-[![Known Vulnerabilities](https://snyk.io/test/github/senecajs/seneca-tangocard-provider/badge.svg)](https://snyk.io/test/github/senecajs/seneca-tangocard-provider)
+[![npm version](https://img.shields.io/npm/v/@seneca/vercel-provider.svg)](https://npmjs.com/package/@seneca/vercel-provider)
+[![build](https://github.com/senecajs/seneca-vercel-provider/actions/workflows/build.yml/badge.svg)](https://github.com/senecajs/seneca-vercel-provider/actions/workflows/build.yml)
+[![Coverage Status](https://coveralls.io/repos/github/senecajs/seneca-vercel-provider/badge.svg?branch=main)](https://coveralls.io/github/senecajs/seneca-vercel-provider?branch=main)
+[![Known Vulnerabilities](https://snyk.io/test/github/senecajs/seneca-vercel-provider/badge.svg)](https://snyk.io/test/github/senecajs/seneca-vercel-provider)
 [![DeepScan grade](https://deepscan.io/api/teams/5016/projects/19462/branches/505954/badge/grade.svg)](https://deepscan.io/dashboard#view=project&tid=5016&pid=19462&bid=505954)
-[![Maintainability](https://api.codeclimate.com/v1/badges/f76e83896b731bb5d609/maintainability)](https://codeclimate.com/github/senecajs/seneca-tangocard-provider/maintainability)
+[![Maintainability](https://api.codeclimate.com/v1/badges/f76e83896b731bb5d609/maintainability)](https://codeclimate.com/github/senecajs/seneca-vercel-provider/maintainability)
 
 
 | ![Voxgig](https://www.voxgig.com/res/img/vgt01r.png) | This open source module is sponsored and supported by [Voxgig](https://www.voxgig.com). |
@@ -36,24 +36,22 @@ Seneca()
   // Get API keys using the seneca-env plugin
   .use('env', {
     var: {
-      $TANGOCARD_APIKEY: String,
-      $TANGOCARD_USERTOKEN: String,
+      $VERCEL_USERTOKEN: String,
     }
   })
   .use('provider', {
     provider: {
-      tangocard: {
+      vercel: {
         keys: {
-          apikey: { value: '$TANGOCARD_APIKEY' },
-          usertoken: { value: '$TANGOCARD_USERTOKEN' },
+          usertoken: { value: '$VERCEL_USERTOKEN' },
         }
       }
     }
   })
-  .use('tangocard-provider')
+  .use('vercel-provider')
 
-let board = await seneca.entity('provider/tangocard/board')
-  .load$('<tangocard-board-id>')
+let board = await seneca.entity('provider/vercel/board')
+  .load$('<vercel-board-id>')
 
 Console.log('BOARD', board)
 
@@ -67,7 +65,7 @@ Console.log('UPDATED BOARD', board)
 ## Install
 
 ```sh
-$ npm install @seneca/tangocard-provider @seneca/env
+$ npm install @seneca/vercel-provider @seneca/env
 ```
 
 
@@ -84,7 +82,7 @@ Set plugin options when loading with:
 ```js
 
 
-seneca.use('TangocardProvider', { name: value, ... })
+seneca.use('VercelProvider', { name: value, ... })
 
 
 ```
@@ -102,9 +100,9 @@ seneca.use('TangocardProvider', { name: value, ... })
 
 ## Action Patterns
 
-* [role:entity,base:tangocard,cmd:load,name:repo,zone:provider](#-roleentitybasetangocardcmdloadnamerepozoneprovider-)
-* [role:entity,base:tangocard,cmd:save,name:repo,zone:provider](#-roleentitybasetangocardcmdsavenamerepozoneprovider-)
-* [sys:provider,get:info,provider:tangocard](#-sysprovidergetinfoprovidertangocard-)
+* [role:entity,base:vercel,cmd:load,name:repo,zone:provider](#-roleentitybasevercelcmdloadnamerepozoneprovider-)
+* [role:entity,base:vercel,cmd:save,name:repo,zone:provider](#-roleentitybasevercelcmdsavenamerepozoneprovider-)
+* [sys:provider,get:info,provider:vercel](#-sysprovidergetinfoprovidervercel-)
 
 
 <!--END:action-list-->
@@ -114,21 +112,24 @@ seneca.use('TangocardProvider', { name: value, ... })
 
 ## Action Descriptions
 
-### &laquo; `role:entity,base:tangocard,cmd:load,name:repo,zone:provider` &raquo;
+### &laquo; `role:entity,base:vercel,cmd:list,name:repo,zone:provider` &raquo;
 
-Load Tangocard repository data into an entity.
+List Vercel repository data into an entity.
+
+----------
+### &laquo; `role:entity,base:vercel,cmd:load,name:repo,zone:provider` &raquo;
+
+Load Vercel repository data into an entity.
+
+----------
+### &laquo; `role:entity,base:vercel,cmd:save,name:repo,zone:provider` &raquo;
+
+Update Vercel repository data from an entity.
 
 
 
 ----------
-### &laquo; `role:entity,base:tangocard,cmd:save,name:repo,zone:provider` &raquo;
-
-Update Tangocard repository data from an entity.
-
-
-
-----------
-### &laquo; `sys:provider,get:info,provider:tangocard` &raquo;
+### &laquo; `sys:provider,get:info,provider:vercel` &raquo;
 
 Get information about the provider.
 
