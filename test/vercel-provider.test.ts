@@ -12,7 +12,10 @@ const BasicMessages = require('./basic.messages.js')
 
 // Only run some tests locally (not on Github Actions).
 const ENV: any = {}
-const CONFIG: any = {}
+const CONFIG: any = {
+  VERCEL_PROJECT_ID: process.env.VERCEL_PROJECT_ID,
+  VERCEL_PROJECT_NAME: process.env.VERCEL_PROJECT_NAME,
+}
 
 // Get env vars from local-env.js.
 if (Fs.existsSync(__dirname + '/local-env.js')) {
@@ -68,17 +71,18 @@ describe('vercel-provider', () => {
 
   })
 
-  //IMPORTANT: This test creates a real project on Vercel. There is no SandBox on Vercel (09-06-2022).
-  test('projects-basic-save', async () => {
-    if (!ENV) return;
-    if (!CONFIG) return;
+  // IMPORTANT: This test creates a real project on Vercel. There is no SandBox on Vercel (09-06-2022).
+  // TODO: find a way to simulate this
+  // test('projects-basic-save', async () => {
+  //   if (!ENV) return;
+  //   if (!CONFIG) return;
 
-    const seneca = await makeSeneca()
+  //   const seneca = await makeSeneca()
 
-    const save = await seneca.entity("provider/vercel/projects").save$(CONFIG.VERCEL_PROJECT_NAME)
-    expect('string' === typeof save.id).toBeTruthy()
+  //   const save = await seneca.entity("provider/vercel/projects").save$(CONFIG.VERCEL_PROJECT_NAME)
+  //   expect('string' === typeof save.id).toBeTruthy()
 
-  })
+  // })
 
 })
 
