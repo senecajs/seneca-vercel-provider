@@ -52,7 +52,7 @@ describe('vercel-provider', () => {
 
     const seneca = await makeSeneca()
 
-    const list = await seneca.entity("provider/vercel/projects").list$()
+    const list = await seneca.entity("provider/vercel/project").list$()
     expect(list.length > 0).toBeTruthy()
 
   })
@@ -63,20 +63,20 @@ describe('vercel-provider', () => {
 
     const seneca = await makeSeneca()
 
-    const load = await seneca.entity("provider/vercel/projects").load$(CONFIG.VERCEL_PROJECT_ID)
-    expect('object' === typeof load).toBeTruthy()
+    const load = await seneca.entity("provider/vercel/project").load$(CONFIG.VERCEL_PROJECT_ID)
+    expect(null == load).toBeFalsy()
 
   })
 
-  //IMPORTANT: This test creates a real project on Vercel. There is no SandBox on Vercel (09-06-2022).
+  // IMPORTANT: This test creates a real project on Vercel. There is no SandBox on Vercel (09-06-2022).
   test('projects-basic-save', async () => {
     if (!ENV) return;
     if (!CONFIG) return;
 
     const seneca = await makeSeneca()
 
-    const save = await seneca.entity("provider/vercel/projects").save$(CONFIG.VERCEL_PROJECT_NAME)
-    expect('string' === typeof save.id).toBeTruthy()
+    const save = await seneca.entity("provider/vercel/project").save$(CONFIG.VERCEL_PROJECT_NAME)
+    expect(save.id).toBeDefined()
 
   })
 
