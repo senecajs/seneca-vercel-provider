@@ -26,23 +26,23 @@ function VercelProvider(this: any, options: VercelProviderOptions) {
       name: 'vercel'
     },
     entity: {
-      projects: {
+      project: {
         cmd: {
           list: {
             action: async function(this: any, entize: any, msg: any) {
-              const res: any = await getJSON(makeUrl('projects', msg.q, options), options, makeConfig(seneca))
+              const res: any = await getJSON(makeUrl('projects', msg.q, options), options, makeConfig(this))
               let projects = res.projects
               let list = projects.map((data: any) => entize(data))
 
               // TODO: ensure seneca-transport preserves array props
               list.page = res.page
-
+              
               return list
             },
           },
           load: {
             action: async function(this: any, entize: any, msg: any) {
-              const res: any = await getJSON(makeUrl('projects', msg.q.id, options), options, makeConfig(seneca))
+              const res: any = await getJSON(makeUrl('projects', msg.q.id, options), options, makeConfig(this))
               let load = res ? entize(res) : null
 
               // TODO: ensure seneca-transport preserves array props
@@ -59,7 +59,7 @@ function VercelProvider(this: any, options: VercelProviderOptions) {
                 msg.ent.data$(false)
               )
 
-              const res: any = await postJSON(makeUrl('projects', msg.q, options), makeConfig(seneca,{
+              const res: any = await postJSON(makeUrl('projects', msg.q, options), makeConfig(this,{
                 body
               }), options)
 
