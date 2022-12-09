@@ -32,6 +32,7 @@ describe('vercel-provider', () => {
   test('happy', async () => {
     expect(VercelProvider).toBeDefined()
     expect(VercelProviderDoc).toBeDefined()
+    if (!ENV.VERCEL_USERTOKEN) return;
 
     const seneca = await makeSeneca()
 
@@ -51,7 +52,7 @@ describe('vercel-provider', () => {
 
 
   test('projects-basic-list', async () => {
-    if (!ENV) return;
+    if (!ENV.VERCEL_USERTOKEN) return;
 
     const seneca = await makeSeneca()
 
@@ -61,7 +62,7 @@ describe('vercel-provider', () => {
   })
 
   test('projects-basic-load', async () => {
-    if (!ENV) return;
+    if (!ENV.VERCEL_USERTOKEN) return;
     if (!CONFIG) return;
 
     const seneca = await makeSeneca()
@@ -74,7 +75,7 @@ describe('vercel-provider', () => {
   // IMPORTANT: This test creates a real project on Vercel. There is no SandBox on Vercel (09-06-2022).
   // TODO: find a way to simulate this
   // test('projects-basic-save', async () => {
-  //   if (!ENV) return;
+  //   if (!ENV.VERCEL_USERTOKEN) return;
   //   if (!CONFIG) return;
   //   const seneca = await makeSeneca()
   //   const save = await seneca.entity("provider/vercel/project").save$(CONFIG.VERCEL_PROJECT_NAME)
