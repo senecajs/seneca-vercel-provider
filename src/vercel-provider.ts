@@ -1,23 +1,42 @@
 /* Copyright © 2022 Seneca Project Contributors, MIT License. */
-import { VercelProviderOptions } from './types'
-import { getJSON, makeConfig, makeUrl, postJSON } from './utils'
+import fetch from "node-fetch"
 
 const Pkg = require('../package.json')
 
-import fetch from "node-fetch";
+export type VercelProviderOptions = {
+  url: string
+  fetch: any
+  debug: boolean
+}
 
 function VercelProvider(this: any, options: VercelProviderOptions) {
   const seneca: any = this
 
-  const entityBuilder = this.export('provider/entityBuilder')
+  const makeUtils = this.export("provider/makeUtils")
+
+  const { makeUrl, getJSON, postJSON, entityBuilder } = makeUtils({
+    name: "vercel",
+    url: options.url,
+  })
 
   seneca.message('sys:provider,provider:vercel,get:info', get_info)
+
+  const makeConfig = (config?: any) =>
+  seneca.util.deep(
+    {
+      headers: {
+        ...seneca.shared.headers,
+      },
+    },
+    config
+  )
 
   async function get_info(this: any, _msg: any) {
     return {
       ok: true,
       name: 'vercel',
       version: Pkg.version,
+      mark: true
     }
   }
 
@@ -30,8 +49,8 @@ function VercelProvider(this: any, options: VercelProviderOptions) {
         cmd: {
           list: {
             action: async function(this: any, entize: any, msg: any) {
-              const res: any = await getJSON(makeUrl('projects', msg.q, options), options, makeConfig(this))
-              let projects = res.projects
+              const res: any = await getJSON(makeUrl("projects", msg.q), makeConfig())
+              const { projects } = res
               let list = projects.map((data: any) => entize(data))
 
               // TODO: ensure seneca-transport preserves array props
@@ -42,7 +61,7 @@ function VercelProvider(this: any, options: VercelProviderOptions) {
           },
           load: {
             action: async function(this: any, entize: any, msg: any) {
-              const res: any = await getJSON(makeUrl('projects', msg.q.id, options), options, makeConfig(this))
+              const res: any = await getJSON(makeUrl("projects", msg.q.id), makeConfig())
               let load = res ? entize(res) : null
 
               // TODO: ensure seneca-transport preserves array props
@@ -55,13 +74,10 @@ function VercelProvider(this: any, options: VercelProviderOptions) {
             action: async function(this: any, entize: any, msg: any) {
               const body = this.util.deep(
                 this.shared.primary,
-                options.entity.projects.save,
                 msg.ent.data$(false)
               )
 
-              const res: any = await postJSON(makeUrl('projects', msg.q, options), makeConfig(this,{
-                body
-              }), options)
+              const res: any = await postJSON(makeUrl("projects", msg.q), makeConfig({ body }))
 
               const project = res
               return entize(project)
@@ -92,16 +108,6 @@ function VercelProvider(this: any, options: VercelProviderOptions) {
     }
 
   })
-
-
-  return {
-    exports: {
-      makeUrl,
-      makeConfig,
-      getJSON,
-      postJSON,
-    }
-  }
 }
 
 
@@ -113,14 +119,6 @@ const defaults: VercelProviderOptions = {
   
   // Use global fetch by default - if exists
   fetch: ('undefined' === typeof fetch ? undefined : fetch),
-
-  entity: {
-    projects: {
-      save: {
-        // Default fields
-      }
-    }
-  },
 
   // TODO: Enable debug logging
   debug: false

@@ -48,7 +48,7 @@ describe('vercel-provider', () => {
 
 
   test('projects-basic-list', async () => {
-    if (!ENV) return;
+    if (!ENV) return
 
     const seneca = await makeSeneca()
 
@@ -58,8 +58,8 @@ describe('vercel-provider', () => {
   })
 
   test('projects-basic-load', async () => {
-    if (!ENV) return;
-    if (!CONFIG) return;
+    if (!ENV) return
+    if (!CONFIG) return
 
     const seneca = await makeSeneca()
 
@@ -70,8 +70,8 @@ describe('vercel-provider', () => {
 
   // IMPORTANT: This test creates a real project on Vercel. There is no SandBox on Vercel (09-06-2022).
   test('projects-basic-save', async () => {
-    if (!ENV) return;
-    if (!CONFIG) return;
+    if (!ENV) return
+    if (!CONFIG) return
 
     const seneca = await makeSeneca()
 
