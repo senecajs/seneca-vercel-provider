@@ -17,7 +17,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git://vercel.com/senecajs/seneca-vercel-provider.git"
+    "url": "git://github.com/senecajs/seneca-vercel-provider.git"
   },
   "scripts": {
     "test": "jest --coverage",
