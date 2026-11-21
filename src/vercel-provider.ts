@@ -1,5 +1,4 @@
 /* Copyright © 2022 Seneca Project Contributors, MIT License. */
-import fetch from "node-fetch"
 
 const Pkg = require('../package.json')
 
@@ -117,7 +116,7 @@ const defaults: VercelProviderOptions = {
   // Vercel Projects API Endpoint /
   url: 'https://api.vercel.com/v9/',
   
-  // Use global fetch by default - if exists
+  // Use the global fetch of Node.js by default
   fetch: ('undefined' === typeof fetch ? undefined : fetch),
 
   // TODO: Enable debug logging

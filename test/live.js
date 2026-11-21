@@ -1,24 +1,17 @@
-
-// IMPORTANT: assumes node-fetch@2
-const Fetch = require('node-fetch')
-
 const Seneca = require('seneca')
-
-// global.fetch = Fetch
 
 
 Seneca({ legacy: false })
   .test()
-  .use('promisify')
-  .use('entity')
-  .use('env', {
+  .use('@seneca/entity')
+  .use('@seneca/env', {
     // debug: true,
     file: [__dirname + '/local-env.js;?'],
     var: {
       $VERCEL_USERTOKEN: String,
     }
   })
-  .use('provider', {
+  .use('@seneca/provider', {
     provider: {
         vercel: {
           keys: {
