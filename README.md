@@ -7,11 +7,9 @@ Provides access to the Vercel API using the Seneca *provider*
 convention. Vercel API entities are represented as Seneca entities so
 that they can be accessed using the Seneca entity API and messages.
 
-See [seneca-entity](senecajs/seneca-entity) and the [Seneca Data
+See [@seneca/entity](https://github.com/senecajs/seneca-entity) and the [Seneca Data
 Entities
 Tutorial](https://senecajs.org/docs/tutorials/understanding-data-entities.html) for more details on the Seneca entity API.
-
-NOTE: underlying third party SDK needs to be replaced as out of date and has a security issue.
 
 [![npm version](https://img.shields.io/npm/v/@seneca/vercel-provider.svg)](https://npmjs.com/package/@seneca/vercel-provider)
 [![build](https://github.com/senecajs/seneca-vercel-provider/actions/workflows/build.yml/badge.svg)](https://github.com/senecajs/seneca-vercel-provider/actions/workflows/build.yml)
@@ -32,40 +30,44 @@ NOTE: underlying third party SDK needs to be replaced as out of date and has a s
 
 // Setup - get the key value (<SECRET>) separately from a vault or
 // environment variable.
-Seneca()
-  // Get API keys using the seneca-env plugin
-  .use('env', {
+const seneca = Seneca()
+  .use('@seneca/entity')
+  // Get API keys using the @seneca/env plugin
+  .use('@seneca/env', {
     var: {
       $VERCEL_USERTOKEN: String,
     }
   })
-  .use('provider', {
+  .use('@seneca/provider', {
     provider: {
       vercel: {
         keys: {
           usertoken: { value: '$VERCEL_USERTOKEN' },
+          // The name of new projects.
+          projectname: { value: '<project-name>' },
         }
       }
     }
   })
-  .use('vercel-provider')
+  .use('@seneca/vercel-provider')
 
-let board = await seneca.entity('provider/vercel/board')
-  .load$('<vercel-board-id>')
+await seneca.ready()
 
-Console.log('BOARD', board)
+const projects = await seneca.entity('provider/vercel/project').list$()
 
-board.desc = 'New description'
-board = await board.save$()
+const project = await seneca.entity('provider/vercel/project')
+  .load$('<vercel-project-id>')
 
-Console.log('UPDATED BOARD', board)
+console.log('PROJECT', project.name)
 
 ```
 
 ## Install
 
+Requires Seneca 4 and Node.js 24 or later.
+
 ```sh
-$ npm install @seneca/vercel-provider @seneca/env
+$ npm install seneca@^4 @seneca/entity @seneca/provider @seneca/env @seneca/vercel-provider
 ```
 
 
